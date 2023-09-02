@@ -1,8 +1,8 @@
 
 
-use core::fmt::Write;
+use core::fmt::{Write, self};
 
-use crate::vga::{VGA_WIDTH, vga_entry, Color, vga_entry_color, VGA_HEIGHT};
+use crate::{vga::{VGA_WIDTH, vga_entry, Color, vga_entry_color, VGA_HEIGHT}, get_mut_terminal};
 
 
 
@@ -19,7 +19,7 @@ impl Terminal{
         terminal
     }
 
-    fn clear_screen(&mut self, color: u8){
+    pub fn clear_screen(&mut self, color: u8){
         for mut _entry in *self.buffer{
             _entry = vga_entry(' ' as u8, color);
         }
@@ -59,3 +59,19 @@ impl Write for Terminal{
     }
 }
 
+#[macro_export]
+macro_rules! print {
+    ($($arg:tt)*) => ($crate::terminal::_print(format_args!($($arg)*)));
+}
+
+#[macro_export]
+macro_rules! println {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
+}
+
+
+#[doc(hidden)]
+pub fn _print(args: fmt::Arguments) {
+    get_mut_terminal().write_fmt(args).unwrap();
+}

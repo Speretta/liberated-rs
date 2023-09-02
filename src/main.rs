@@ -2,8 +2,7 @@
 #![no_main]
 #![feature(panic_info_message)]
 
-use core::panic::PanicInfo;
-
+use core::{panic::PanicInfo, cell::OnceCell};
 
 use terminal::*;
 use vga::*;
@@ -11,14 +10,28 @@ use vga::*;
 mod terminal;
 mod vga;
 
+static mut TERMINAL: OnceCell<Terminal> = OnceCell::new();
+
+pub fn get_and_init_terminal() -> &'static Terminal{
+    unsafe {
+        TERMINAL.get_or_init(|| terminal::Terminal::new())
+    }
+}
+
+pub fn get_mut_terminal() -> &'static mut Terminal{
+    unsafe {
+        TERMINAL.get_mut().unwrap()
+    }
+}
+
+
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    let terminal = terminal::Terminal::new();
-
-    
-
+    get_and_init_terminal();
+    println!("{}", "deneme");
     loop {}
 }
+
 
 /// This function is called on panic.
 #[panic_handler]
@@ -36,6 +49,6 @@ fn panic(info: &PanicInfo) -> ! {
     !YOU CAN TURN OFF OR REBOOT YOUR COMPUTER!
     ";
 
-
+    println!("{} {}", panic_msg, info);
     loop {}
 }
