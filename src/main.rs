@@ -13,8 +13,9 @@ mod vga;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    terminal_initialize();
-    terminal_write("hello", Color::White, Color::Black);
+    let terminal = terminal::Terminal::new();
+
+    
 
     loop {}
 }
@@ -23,8 +24,6 @@ pub extern "C" fn _start() -> ! {
 #[panic_handler]
 #[allow(unused)]
 fn panic(info: &PanicInfo) -> ! {
-    clear_screen();
-    unsafe {TERM_ROW = 0}
     
     let panic_msg = "
     \n\n
@@ -37,6 +36,6 @@ fn panic(info: &PanicInfo) -> ! {
     !YOU CAN TURN OFF OR REBOOT YOUR COMPUTER!
     ";
 
-    terminal_write(panic_msg, Color::Red, Color::Black);
+
     loop {}
 }
