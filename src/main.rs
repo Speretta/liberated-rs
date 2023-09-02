@@ -4,7 +4,6 @@
 
 use core::panic::PanicInfo;
 
-
 use terminal::*;
 use vga::*;
 
@@ -15,17 +14,15 @@ mod vga;
 pub extern "C" fn _start() -> ! {
     terminal_initialize();
     terminal_write("hello", Color::White, Color::Black);
-
     loop {}
 }
 
-/// This function is called on panic.
 #[panic_handler]
 #[allow(unused)]
 fn panic(info: &PanicInfo) -> ! {
     clear_screen();
-    unsafe {TERM_ROW = 0}
-    
+    unsafe { TERM_ROW = 0 }
+
     let panic_msg = "
     \n\n
     A FATAL ERROR HAS OCCURRED IN THE OPERATING SYSTEM KERNEL,\n

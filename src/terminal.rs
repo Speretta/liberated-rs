@@ -86,3 +86,14 @@ pub fn terminal_initialize() {
         }
     }
 }
+
+#[macro_export]
+macro_rules! print {
+    ($($arg:tt)*) => ($crate::terminal::terminal_putchar(format_args!($($arg)*), 0x13));
+}
+
+#[macro_export]
+macro_rules! println {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
+}
