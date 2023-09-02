@@ -4,8 +4,7 @@
 
 use core::{panic::PanicInfo, cell::OnceCell};
 
-use terminal::*;
-use vga::*;
+use terminal::Terminal;
 
 mod terminal;
 mod vga;
