@@ -2,27 +2,43 @@
 #![no_main]
 #![feature(panic_info_message)]
 
-use core::panic::PanicInfo;
+use core::{panic::PanicInfo, cell::OnceCell};
 
-use terminal::*;
-use vga::*;
+use terminal::Terminal;
+
+use crate::vga::Color;
 
 mod terminal;
 mod vga;
 
+static mut TERMINAL: OnceCell<Terminal> = OnceCell::new();
+
+pub fn get_and_init_terminal() -> &'static Terminal{
+    unsafe {
+        TERMINAL.get_or_init(|| terminal::Terminal::new())
+    }
+}
+
+pub fn get_mut_terminal() -> &'static mut Terminal{
+    unsafe {
+        TERMINAL.get_mut().unwrap()
+    }
+}
+
+
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    terminal_initialize();
-    terminal_write("hello", Color::White, Color::Black);
+    get_and_init_terminal();
     loop {}
 }
 
+
+/// This function is called on panic.
 #[panic_handler]
 #[allow(unused)]
 fn panic(info: &PanicInfo) -> ! {
-    clear_screen();
-    unsafe { TERM_ROW = 0 }
-
+    get_mut_terminal().clear_screen(Color::Black as u8);
+    
     let panic_msg = "
     \n\n
     A FATAL ERROR HAS OCCURRED IN THE OPERATING SYSTEM KERNEL,\n
@@ -34,6 +50,6 @@ fn panic(info: &PanicInfo) -> ! {
     !YOU CAN TURN OFF OR REBOOT YOUR COMPUTER!
     ";
 
-    terminal_write(panic_msg, Color::Red, Color::Black);
+    println!("{}\n\nSome informations about error:\n{}", panic_msg, info);
     loop {}
 }
