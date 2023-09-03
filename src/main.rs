@@ -2,15 +2,15 @@
 #![cfg_attr(not(test), no_std)]
 #![feature(panic_info_message)]
 
-use core::{panic::PanicInfo, cell::OnceCell};
-
 mod terminal;
 mod vga;
-
 mod tests;
 
 use terminal::Terminal;
 use crate::vga::Color;
+
+use core::{panic::PanicInfo, cell::OnceCell};
+
 
 static mut TERMINAL: OnceCell<Terminal> = OnceCell::new();
 

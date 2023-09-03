@@ -32,17 +32,14 @@ impl Terminal {
     }
 
     fn terminal_putchar(&mut self, ch: char, color: u8) {
-        if ch == '\n' || self.position.1 >= VGA_WIDTH {
+        if ch == '\n' || self.position.1 >= VGA_WIDTH{
             self.position.0 += 1;
             self.position.1 = 0;
-        } else {
-            if self.position.0 >= VGA_HEIGHT {
-                self.terminal_scroll(color);
-            }
-
-            self.buffer[self.position.0 * VGA_WIDTH + self.position.1] = vga_entry(ch as u8, color);
-            self.position.1 += 1;
+        }else if self.position.0 >= VGA_HEIGHT{
+            self.terminal_scroll(color);
         }
+        self.buffer[self.position.0 * VGA_WIDTH + self.position.1] = vga_entry(ch as u8, color);
+        self.position.1 += 1;
     }
 
     fn terminal_scroll(&mut self, color: u8) {
