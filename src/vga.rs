@@ -21,11 +21,11 @@ pub enum Color {
 }
 
 pub fn vga_entry_color(fg: Color, bg: Color) -> u8 {
-    return fg as u8 | (bg as u8) << 4;
+    fg as u8 | (bg as u8) << 4
 }
 
 pub fn vga_entry(uc: u8, color: u8) -> u16 {
-    return uc as u16 | (color as u16) << 8;
+    uc as u16 | (color as u16) << 8
 }
 
 pub const VGA_HEIGHT: usize = 25;
