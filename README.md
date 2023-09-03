@@ -24,4 +24,4 @@ cargo run
 ```
 
 # License
-This project is licensed under The GNU General Public License v3.0 License **(GPL)**. Please look to <a href="https://github.com/infoexp-dev/liberated-rs/blob/master/LICENSE">LICENSE</a> for more information.**
+This project is licensed under The GNU General Public License v3.0 License **(GPL)**. Please look to <a href="https://github.com/infoexp-dev/liberated-rs/blob/master/LICENSE">LICENSE</a> for more information.
