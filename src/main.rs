@@ -4,12 +4,11 @@
 
 use core::{panic::PanicInfo, cell::OnceCell};
 
-use terminal::Terminal;
-
-use crate::vga::Color;
-
 mod terminal;
 mod vga;
+
+use terminal::Terminal;
+use crate::vga::Color;
 
 static mut TERMINAL: OnceCell<Terminal> = OnceCell::new();
 
@@ -38,8 +37,8 @@ pub extern "C" fn _start() -> ! {
 #[allow(unused)]
 fn panic(info: &PanicInfo) -> ! {
     get_mut_terminal().clear_screen(Color::Black as u8);
-    
-    let panic_msg = "
+
+    let def_panic_msg = "
     \n\n
     A FATAL ERROR HAS OCCURRED IN THE OPERATING SYSTEM KERNEL,\n
     THE SYSTEM HAS TO BE STOPPED IN THIS CASE.\n
@@ -50,6 +49,7 @@ fn panic(info: &PanicInfo) -> ! {
     !YOU CAN TURN OFF OR REBOOT YOUR COMPUTER!
     ";
 
-    println!("{}\n\nSome informations about error:\n{}", panic_msg, info);
+    get_mut_terminal().term_write_legacy(def_panic_msg, Color::Red, Color::Black);
+    println!("\n\nSome useful informations about error:\n\n{}", info);
     loop {}
 }
