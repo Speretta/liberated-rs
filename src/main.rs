@@ -1,11 +1,13 @@
-#![no_std]
 #![no_main]
+#![cfg_attr(not(test), no_std)]
 #![feature(panic_info_message)]
 
 use core::{panic::PanicInfo, cell::OnceCell};
 
 mod terminal;
 mod vga;
+
+mod tests;
 
 use terminal::Terminal;
 use crate::vga::Color;
@@ -14,7 +16,7 @@ static mut TERMINAL: OnceCell<Terminal> = OnceCell::new();
 
 pub fn get_and_init_terminal() -> &'static Terminal{
     unsafe {
-        TERMINAL.get_or_init(|| terminal::Terminal::new())
+        TERMINAL.get_or_init(terminal::Terminal::new)
     }
 }
 
@@ -32,7 +34,6 @@ pub extern "C" fn _start() -> ! {
 }
 
 
-/// This function is called on panic.
 #[panic_handler]
 #[allow(unused)]
 fn panic(info: &PanicInfo) -> ! {

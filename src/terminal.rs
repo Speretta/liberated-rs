@@ -23,38 +23,35 @@ impl Terminal {
     }
 
     pub fn clear_screen(&mut self, color: u8) {
-        let blank = vga_entry(' ' as u8, color);
+        let blank = vga_entry(b' ', color);
         for entry in self.buffer.iter_mut() {
             *entry = blank;
         }
+        self.position.0 = 0;
+        self.position.1 = 0;
     }
 
     fn terminal_putchar(&mut self, ch: char, color: u8) {
-        if ch == '\n' {
+        if ch == '\n' || self.position.1 >= VGA_WIDTH {
             self.position.0 += 1;
             self.position.1 = 0;
         } else {
-            if self.position.1 >= VGA_WIDTH {
-                self.position.0 += 1;
-                self.position.1 = 0;
-            }
             if self.position.0 >= VGA_HEIGHT {
                 self.terminal_scroll(color);
             }
 
-            let index = self.position.0 * VGA_WIDTH + self.position.1;
-            self.buffer[index] = vga_entry(ch as u8, color);
+            self.buffer[self.position.0 * VGA_WIDTH + self.position.1] = vga_entry(ch as u8, color);
             self.position.1 += 1;
         }
     }
 
     fn terminal_scroll(&mut self, color: u8) {
         let tmp = &self.buffer.clone()[VGA_WIDTH..VGA_HEIGHT * VGA_WIDTH];
-        for (i, x) in tmp.into_iter().enumerate() {
+        for (i, x) in tmp.iter().enumerate() {
             self.buffer[i] = *x;
         }
         for i in (VGA_HEIGHT - 1) * VGA_WIDTH..VGA_HEIGHT * VGA_WIDTH {
-            self.buffer[i] = vga_entry(' ' as u8, color)
+            self.buffer[i] = vga_entry(b' ', color)
         }
         self.position.0 -= 1;
         self.position.1 = 0;
