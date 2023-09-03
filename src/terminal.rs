@@ -2,7 +2,7 @@ use core::fmt::{self, Write};
 
 use crate::{
     get_mut_terminal,
-    vga::{vga_entry, Color, VGA_HEIGHT, VGA_WIDTH},
+    vga::{vga_entry, Color, VGA_HEIGHT, VGA_WIDTH, vga_entry_color},
 };
 
 pub struct Terminal {
@@ -27,7 +27,7 @@ impl Terminal {
         for entry in self.buffer.iter_mut() {
             *entry = blank;
         }
-    }    
+    }
 
     fn terminal_putchar(&mut self, ch: char, color: u8) {
         if ch == '\n' {
@@ -58,6 +58,13 @@ impl Terminal {
         }
         self.position.0 -= 1;
         self.position.1 = 0;
+    }
+
+    pub fn term_write_legacy(&mut self, data: &str, fg: Color, bg: Color) {
+        let text_color: u8 = vga_entry_color(fg, bg);
+        for char in data.chars() {
+            self.terminal_putchar(char, text_color);
+        }
     }
 }
 
